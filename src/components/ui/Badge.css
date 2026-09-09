@@ -1,0 +1,59 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.badge--green {
+  background: rgba(74,103,65,0.12);
+  color: var(--color-muted-green);
+  border-color: rgba(74,103,65,0.2);
+}
+.badge--blue {
+  background: rgba(27,58,92,0.10);
+  color: var(--color-ink-blue);
+  border-color: rgba(27,58,92,0.18);
+}
+.badge--mustard {
+  background: rgba(212,160,23,0.12);
+  color: #9A7300;
+  border-color: rgba(212,160,23,0.25);
+}
+.badge--orange {
+  background: rgba(196,96,58,0.12);
+  color: var(--color-terracotta);
+  border-color: rgba(196,96,58,0.22);
+}
+.badge--grey {
+  background: var(--color-charcoal-10);
+  color: var(--color-charcoal-80);
+  border-color: var(--color-border);
+}
+.badge--swap {
+  background: rgba(27,58,92,0.1);
+  color: var(--color-ink-blue);
+  border-color: rgba(27,58,92,0.2);
+  font-family: var(--font-heading);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+}
+.badge--category {
+  background: var(--color-charcoal-10);
+  color: var(--color-charcoal-80);
+  font-family: var(--font-heading);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-transform: capitalize;
+}
+.badge--status {
+  font-size: 9px;
+  letter-spacing: 0.12em;
+}

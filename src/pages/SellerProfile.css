@@ -1,0 +1,91 @@
+.seller-profile {
+  min-height: 100vh;
+  padding-top: calc(var(--nav-height) + var(--sp-8));
+  padding-bottom: var(--sp-10);
+}
+
+.seller-profile__header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-7);
+  padding-bottom: var(--sp-7);
+}
+
+.seller-profile__avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: var(--radius-full);
+  object-fit: cover;
+  border: 3px solid var(--color-border);
+  flex-shrink: 0;
+  box-shadow: var(--shadow-md);
+}
+
+.seller-profile__info {
+  flex: 1;
+  padding-top: var(--sp-2);
+}
+
+.seller-profile__name {
+  font-size: var(--text-3xl);
+  font-weight: 700;
+  color: var(--color-charcoal);
+  margin: var(--sp-2) 0 var(--sp-3);
+  letter-spacing: -0.02em;
+}
+
+.seller-profile__bio {
+  font-size: var(--text-md);
+  color: var(--color-charcoal-80);
+  font-style: italic;
+  font-family: var(--font-display);
+  line-height: 1.55;
+  margin-bottom: var(--sp-4);
+  max-width: 500px;
+}
+
+.seller-profile__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-4);
+  align-items: center;
+}
+
+.seller-profile__meta-item {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: var(--text-sm);
+  color: var(--color-charcoal-40);
+}
+
+.seller-profile__divider {
+  height: 1px;
+  background: var(--color-border);
+  margin-bottom: var(--sp-7);
+}
+
+.seller-profile__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--sp-5);
+}
+
+.seller-profile__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-5);
+  padding: var(--sp-9) 0;
+  color: var(--color-charcoal-40);
+  font-size: var(--text-sm);
+  text-align: center;
+}
+
+@media (max-width: 1024px) { .seller-profile__grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 768px)  {
+  .seller-profile__header { flex-direction: column; align-items: center; text-align: center; gap: var(--sp-5); }
+  .seller-profile__meta { justify-content: center; }
+  .seller-profile__grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 480px)  { .seller-profile__grid { grid-template-columns: 1fr; } }
