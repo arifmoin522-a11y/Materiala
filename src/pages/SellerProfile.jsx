@@ -1,12 +1,13 @@
 import { Link, useParams } from 'react-router-dom';
 import { USERS } from '../data/users';
-import { PRODUCTS } from '../data/products';
+import { useApp } from '../context/AppContext';
 import ProductCard from '../components/product/ProductCard';
 import { useScrollRevealAll } from '../hooks/useScrollReveal';
 import './SellerProfile.css';
 
 export default function SellerProfile() {
   const { id } = useParams();
+  const { products } = useApp();
   const seller = USERS.find(u => u.id === id);
   useScrollRevealAll();
 
@@ -17,7 +18,7 @@ export default function SellerProfile() {
     </div>
   );
 
-  const listings = PRODUCTS.filter(p => p.sellerId === id && p.status === 'available');
+  const listings = products.filter(p => p.sellerId === id && p.status === 'available');
 
   return (
     <div className="seller-profile page-enter">

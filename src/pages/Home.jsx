@@ -1,11 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { PRODUCTS, CATEGORIES } from '../data/products';
+import { CATEGORIES } from '../data/products';
+import { useApp } from '../context/AppContext';
 import ProductCard from '../components/product/ProductCard';
 import { useScrollRevealAll } from '../hooks/useScrollReveal';
 import './Home.css';
-
-const FEATURED = PRODUCTS.filter(p => p.featured).slice(0, 6);
 
 const CITIES_DATA = [
   { city: 'Delhi',     count: 3, distance: 'Local' },
@@ -18,9 +17,11 @@ const CITIES_DATA = [
 ];
 
 export default function Home() {
+  const { products } = useApp();
   useScrollRevealAll();
   const [heroVisible, setHeroVisible] = useState(false);
-  const heroRef = useRef(null);
+
+  const featured = products.filter(p => p.featured && p.status === 'available').slice(0, 6);
 
   useEffect(() => {
     const t = setTimeout(() => setHeroVisible(true), 80);
@@ -117,7 +118,7 @@ export default function Home() {
           </header>
 
           <div className="home-listings__grid">
-            {FEATURED.map((product, i) => (
+            {featured.map((product, i) => (
               <div
                 key={product.id}
                 className={`reveal reveal-delay-${Math.min(i + 1, 5)}`}

@@ -1,21 +1,19 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState } from 'react';
 import { USERS, DEMO_ACCOUNTS } from '../data/users';
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [currentUser, setCurrentUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  // Restore session from localStorage
-  useEffect(() => {
-    const saved = localStorage.getItem('ase_user');
-    if (saved) {
-      try { setCurrentUser(JSON.parse(saved)); }
-      catch { localStorage.removeItem('ase_user'); }
+  const [currentUser, setCurrentUser] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ase_user');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      localStorage.removeItem('ase_user');
+      return null;
     }
-    setLoading(false);
-  }, []);
+  });
+  const [loading] = useState(false);
 
   const login = (email, password) => {
     const account = DEMO_ACCOUNTS.find(

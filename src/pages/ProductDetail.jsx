@@ -49,13 +49,14 @@ export default function ProductDetail() {
 
   const handleSwapRequest = () => {
     if (!currentUser) { navigate('/auth'); return; }
+    const userListing = products.find(p => p.sellerId === currentUser.id);
     addSwapRequest({
       type: 'outgoing',
       requesterId: currentUser.id,
       receiverId: product.sellerId,
-      offeredProductId: 'user-selection',
-      offeredProductName: 'From your listings',
-      offeredProductImage: currentUser.avatar,
+      offeredProductId: userListing ? userListing.id : 'user-selection',
+      offeredProductName: userListing ? userListing.name : 'Curated Art Supplies Selection',
+      offeredProductImage: userListing?.images?.[0] || 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=300&q=80',
       requestedProductId: product.id,
       requestedProductName: product.name,
       requestedProductImage: product.images[0],

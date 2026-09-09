@@ -13,9 +13,9 @@ export default function Chat() {
   const [inputText, setInputText] = useState('');
   const messagesEndRef = useRef(null);
 
-  if (!currentUser) return <Navigate to="/auth" replace />;
-
-  const myConvs = conversations.filter(c => c.participants.includes(currentUser.id));
+  const myConvs = currentUser
+    ? conversations.filter(c => c.participants.includes(currentUser.id))
+    : [];
   
   // Resolve active conversation: URL param takes priority, then first in list
   const convParam = searchParams.get('conv');
@@ -34,6 +34,8 @@ export default function Chat() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [activeConv?.messages?.length]);
+
+  if (!currentUser) return <Navigate to="/auth" replace />;
 
   const handleSend = (e) => {
     e.preventDefault();
@@ -136,7 +138,7 @@ export default function Chat() {
 
             {/* Messages */}
             <div className="messages-area">
-              {activeConv.messages.map((msg, i) => {
+              {activeConv.messages.map((msg) => {
                 const isMe = msg.senderId === currentUser.id;
                 const sender = getUserById(msg.senderId);
                 return (

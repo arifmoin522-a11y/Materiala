@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState } from 'react';
 import { PRODUCTS } from '../data/products';
 import { CONVERSATIONS } from '../data/chats';
 import { SWAP_REQUESTS } from '../data/swaps';
@@ -9,14 +9,15 @@ export function AppProvider({ children }) {
   const [products, setProducts] = useState(PRODUCTS);
   const [conversations, setConversations] = useState(CONVERSATIONS);
   const [swapRequests, setSwapRequests] = useState(SWAP_REQUESTS);
-  const [savedItems, setSavedItems] = useState([]);
+  const [savedItems, setSavedItems] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ase_saved');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
   const [toasts, setToasts] = useState([]);
-
-  // Load saved items from localStorage
-  useEffect(() => {
-    const saved = localStorage.getItem('ase_saved');
-    if (saved) try { setSavedItems(JSON.parse(saved)); } catch {}
-  }, []);
 
   const saveItem = (productId) => {
     setSavedItems(prev => {
