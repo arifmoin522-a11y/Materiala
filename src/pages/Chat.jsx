@@ -11,11 +11,23 @@ export default function Chat() {
   const [searchParams] = useSearchParams();
   const [activeConvId, setActiveConvId] = useState(searchParams.get('conv') || null);
   const [inputText, setInputText] = useState('');
+  const [convSearch, setConvSearch] = useState('');
   const messagesEndRef = useRef(null);
 
   const myConvs = currentUser
     ? conversations.filter(c => c.participants.includes(currentUser.id))
     : [];
+
+  const filteredConvs = myConvs.filter(c => {
+    if (!convSearch.trim()) return true;
+    const query = convSearch.toLowerCase();
+    const other = getUserById(c.participants.find(p => p !== currentUser.id));
+    return (
+      other?.name.toLowerCase().includes(query) ||
+      c.productName.toLowerCase().includes(query) ||
+      c.lastMessage.toLowerCase().includes(query)
+    );
+  });
   
   // Resolve active conversation: URL param takes priority, then first in list
   const convParam = searchParams.get('conv');
@@ -38,10 +50,15 @@ export default function Chat() {
   if (!currentUser) return <Navigate to="/auth" replace />;
 
   const handleSend = (e) => {
-    e.preventDefault();
+    e?.preventDefault();
     if (!inputText.trim() || !activeConv) return;
     sendMessage(activeConv.id, inputText.trim(), currentUser.id);
     setInputText('');
+  };
+
+  const handleQuickReply = (text) => {
+    if (!activeConv) return;
+    sendMessage(activeConv.id, text, currentUser.id);
   };
 
   const formatTime = (ts) => {
@@ -59,23 +76,69 @@ export default function Chat() {
     return getUserById(otherId);
   };
 
+  const quickReplies = [
+    "Is this art material still available?",
+    "Would you consider a swap for other supplies?",
+    "What is the condition and remaining quantity?",
+    "Can we arrange a local studio pickup?"
+  ];
+
   return (
     <div className="chat-page page-enter">
       {/* ── CONVERSATION LIST ── */}
       <aside className="chat-sidebar">
         <div className="chat-sidebar__header">
           <h1 className="heading" style={{ fontSize: 'var(--text-md)', color: 'var(--color-charcoal)' }}>Messages</h1>
-          <span className="mono" style={{ fontSize: 'var(--text-xs)', color: 'var(--color-charcoal-40)' }}>{myConvs.length} conversations</span>
+          <span className="mono" style={{ fontSize: 'var(--text-xs)', color: 'var(--color-charcoal-40)' }}>{filteredConvs.length} of {myConvs.length}</span>
+        </div>
+
+        {/* Search Conversations */}
+        <div style={{ padding: '8px 12px', borderBottom: '1px solid var(--color-border)' }}>
+          <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+            <input
+              type="text"
+              placeholder="Filter chats or materials..."
+              value={convSearch}
+              onChange={e => setConvSearch(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '6px 28px 6px 10px',
+                fontSize: 'var(--text-xs)',
+                borderRadius: 'var(--radius-md)',
+                border: '1px solid var(--color-border)',
+                background: 'var(--color-paper)',
+                outline: 'none',
+                fontFamily: 'inherit'
+              }}
+            />
+            {convSearch && (
+              <button
+                type="button"
+                onClick={() => setConvSearch('')}
+                style={{
+                  position: 'absolute',
+                  right: '6px',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: 'var(--color-charcoal-40)',
+                  fontSize: '12px'
+                }}
+              >
+                ✕
+              </button>
+            )}
+          </div>
         </div>
 
         <div className="conv-list">
-          {myConvs.length === 0 ? (
+          {filteredConvs.length === 0 ? (
             <div className="conv-list__empty">
-              <span>No conversations yet.</span>
-              <p>Start by messaging a seller on a product page.</p>
+              <span>{convSearch ? 'No matching conversations found.' : 'No conversations yet.'}</span>
+              <p>{convSearch ? 'Try a different keyword.' : 'Start by messaging a seller on a product page.'}</p>
             </div>
           ) : (
-            myConvs.map(conv => {
+            filteredConvs.map(conv => {
               const other = getOther(conv);
               const isActive = conv.id === activeConv?.id;
               return (
@@ -154,6 +217,32 @@ export default function Chat() {
                 );
               })}
               <div ref={messagesEndRef} />
+            </div>
+
+            {/* Quick Replies */}
+            <div style={{ display: 'flex', gap: '6px', padding: '6px 16px', background: 'var(--color-paper-light)', overflowX: 'auto', borderTop: '1px solid var(--color-border)', flexShrink: 0 }}>
+              {quickReplies.map((qr, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => handleQuickReply(qr)}
+                  style={{
+                    padding: '4px 10px',
+                    fontSize: '11px',
+                    borderRadius: 'var(--radius-full)',
+                    border: '1px solid var(--color-border)',
+                    background: 'var(--color-paper)',
+                    color: 'var(--color-charcoal-80)',
+                    cursor: 'pointer',
+                    whiteSpace: 'nowrap',
+                    transition: 'all 0.15s ease'
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--color-terracotta)'; e.currentTarget.style.color = 'var(--color-terracotta)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--color-border)'; e.currentTarget.style.color = 'var(--color-charcoal-80)'; }}
+                >
+                  ⚡ {qr}
+                </button>
+              ))}
             </div>
 
             {/* Input */}

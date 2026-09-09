@@ -63,9 +63,31 @@ export default function Auth() {
             Join India's creative circular marketplace.
           </p>
           <div className="auth-panel__demo-hint">
-            <span className="mono" style={{ fontSize: 'var(--text-xs)', opacity: 0.55 }}>Demo accounts:</span>
-            <code className="auth-panel__demo-code">demo@artsupply.in / demo1234</code>
-            <code className="auth-panel__demo-code">admin@artsupply.in / admin1234</code>
+            <span className="mono" style={{ fontSize: 'var(--text-xs)', opacity: 0.75, display: 'block', marginBottom: '8px' }}>⚡ Quick 1-Click Demo Login:</span>
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+              <button
+                type="button"
+                className="btn btn--secondary btn--sm"
+                style={{ background: 'rgba(255,255,255,0.15)', color: '#fff', borderColor: 'rgba(255,255,255,0.3)', backdropFilter: 'blur(8px)' }}
+                onClick={() => {
+                  const res = login('demo@artsupply.in', 'demo1234');
+                  if (res.success) navigate('/');
+                }}
+              >
+                🎨 Demo Artist
+              </button>
+              <button
+                type="button"
+                className="btn btn--secondary btn--sm"
+                style={{ background: 'rgba(255,255,255,0.15)', color: '#fff', borderColor: 'rgba(255,255,255,0.3)', backdropFilter: 'blur(8px)' }}
+                onClick={() => {
+                  const res = login('admin@artsupply.in', 'admin1234');
+                  if (res.success) navigate('/');
+                }}
+              >
+                🛡️ Admin Account
+              </button>
+            </div>
           </div>
         </div>
       </div>

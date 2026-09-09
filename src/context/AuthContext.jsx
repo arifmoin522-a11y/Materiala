@@ -55,12 +55,21 @@ export function AuthProvider({ children }) {
     return { success: true, user: newUser };
   };
 
+  const updateProfile = (updates) => {
+    setCurrentUser(prev => {
+      if (!prev) return prev;
+      const updated = { ...prev, ...updates };
+      localStorage.setItem('ase_user', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
   const logout = () => {
     setCurrentUser(null);
     localStorage.removeItem('ase_user');
   };
 
-  const value = { currentUser, login, register, logout, loading };
+  const value = { currentUser, login, register, logout, updateProfile, loading };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

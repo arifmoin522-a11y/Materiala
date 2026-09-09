@@ -16,8 +16,10 @@ const SORT_OPTIONS = [
 export default function Marketplace() {
   const { products } = useApp();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [searchQuery, setSearchQuery] = useState('');
   const [filterOpen, setFilterOpen] = useState(false);
+
+  const urlSearch = searchParams.get('search') || '';
+  const [searchQuery, setSearchQuery] = useState(urlSearch);
 
   const selectedCategory = searchParams.get('category') || 'all';
   const selectedCity     = searchParams.get('city') || 'all';
@@ -26,6 +28,22 @@ export default function Marketplace() {
   const sortBy           = searchParams.get('sort') || 'newest';
 
   useScrollRevealAll();
+
+  // Keep local search input in sync if URL param changes
+  const handleSearchChange = (val) => {
+    setSearchQuery(val);
+    const next = new URLSearchParams(searchParams);
+    if (val.trim()) next.set('search', val);
+    else next.delete('search');
+    setSearchParams(next, { replace: true });
+  };
+
+  const clearSearch = () => {
+    setSearchQuery('');
+    const next = new URLSearchParams(searchParams);
+    next.delete('search');
+    setSearchParams(next);
+  };
 
   const setParam = (key, value) => {
     const next = new URLSearchParams(searchParams);
@@ -37,11 +55,15 @@ export default function Marketplace() {
   const filtered = useMemo(() => {
     let list = [...products];
 
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase();
+    const activeQuery = searchQuery || urlSearch;
+    if (activeQuery.trim()) {
+      const q = activeQuery.toLowerCase().trim();
       list = list.filter(p =>
         p.name.toLowerCase().includes(q) ||
         p.description.toLowerCase().includes(q) ||
+        p.category.toLowerCase().includes(q) ||
+        p.city.toLowerCase().includes(q) ||
+        p.location.toLowerCase().includes(q) ||
         p.tags?.some(t => t.toLowerCase().includes(q))
       );
     }
@@ -59,12 +81,15 @@ export default function Marketplace() {
     }
 
     return list;
-  }, [products, searchQuery, selectedCategory, selectedCity, selectedCondition, swapOnly, sortBy]);
+  }, [products, searchQuery, urlSearch, selectedCategory, selectedCity, selectedCondition, swapOnly, sortBy]);
 
-  const clearAll = () => setSearchParams({});
+  const clearAll = () => {
+    setSearchQuery('');
+    setSearchParams({});
+  };
 
   const activeFilters = [selectedCategory, selectedCity, selectedCondition]
-    .filter(v => v && v !== 'all').length + (swapOnly ? 1 : 0);
+    .filter(v => v && v !== 'all').length + (swapOnly ? 1 : 0) + (searchQuery ? 1 : 0);
 
   return (
     <div className="marketplace page-enter">
@@ -89,11 +114,21 @@ export default function Marketplace() {
                 id="marketplace-search"
                 type="search"
                 className="search-field"
-                placeholder="Search paints, canvas, brushes..."
+                placeholder="Search paints, canvas, brushes, paper, markers..."
                 value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
+                onChange={e => handleSearchChange(e.target.value)}
                 aria-label="Search art supplies"
               />
+              {searchQuery && (
+                <button
+                  type="button"
+                  className="search-clear-btn"
+                  onClick={clearSearch}
+                  aria-label="Clear search input"
+                >
+                  ✕
+                </button>
+              )}
             </div>
 
             <div className="search-controls">
@@ -122,6 +157,26 @@ export default function Marketplace() {
             </div>
           </div>
 
+          {/* Quick Category Chips */}
+          <div className="marketplace__category-pills" role="toolbar" aria-label="Category quick filters">
+            <button
+              className={`cat-pill ${selectedCategory === 'all' ? 'active' : ''}`}
+              onClick={() => setParam('category', 'all')}
+            >
+              All Items
+            </button>
+            {CATEGORIES.map(c => (
+              <button
+                key={c.id}
+                className={`cat-pill ${selectedCategory === c.id ? 'active' : ''}`}
+                onClick={() => setParam('category', selectedCategory === c.id ? 'all' : c.id)}
+              >
+                <span className="cat-pill__icon">{c.icon}</span>
+                {c.label}
+              </button>
+            ))}
+          </div>
+
           {/* Filters panel */}
           {filterOpen && (
             <div className="filters-panel" role="region" aria-label="Filters">
@@ -148,7 +203,7 @@ export default function Marketplace() {
                   </select>
                 </div>
                 <div className="filter-group">
-                  <label className="filter-label">Exchange</label>
+                  <label className="filter-label">Exchange Option</label>
                   <label className="checkbox-label">
                     <input
                       type="checkbox"
@@ -162,7 +217,7 @@ export default function Marketplace() {
               </div>
               {activeFilters > 0 && (
                 <button className="clear-filters" onClick={clearAll}>
-                  Clear all filters ({activeFilters})
+                  Reset All Filters ({activeFilters})
                 </button>
               )}
             </div>
@@ -175,16 +230,22 @@ export default function Marketplace() {
         <div className="container">
           <div className="results-meta">
             <span className="results-count mono">
-              {filtered.length} item{filtered.length !== 1 ? 's' : ''} found
+              {filtered.length} material{filtered.length !== 1 ? 's' : ''} found
+              {(searchQuery || urlSearch) && <span className="results-query"> for "{searchQuery || urlSearch}"</span>}
             </span>
+            {activeFilters > 0 && (
+              <button className="results-reset-link mono" onClick={clearAll}>
+                Clear filters ✕
+              </button>
+            )}
           </div>
 
           {filtered.length === 0 ? (
             <div className="empty-state">
               <span className="empty-state__icon">🎨</span>
               <h3 className="heading">No materials found</h3>
-              <p>Try adjusting your search or filters.</p>
-              <button className="btn btn--secondary" onClick={clearAll}>Clear filters</button>
+              <p>Try adjusting your keyword search or filter criteria.</p>
+              <button className="btn btn--secondary" onClick={clearAll}>Reset Search & Filters</button>
             </div>
           ) : (
             <div className="marketplace__grid">

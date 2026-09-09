@@ -98,6 +98,67 @@
 .nav-link.active::after { transform: scaleX(1); }
 .nav-link.active { opacity: 1; }
 
+/* ─── SEARCH FORM ────────────────────────── */
+.navbar__search-form {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  max-width: 320px;
+  margin: 0 var(--sp-4);
+  transition: all var(--dur-mid) var(--ease-out);
+}
+
+.navbar__search-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background: var(--color-paper-light);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  padding: 0 var(--sp-3);
+  transition: border-color var(--dur-fast), box-shadow var(--dur-fast);
+}
+
+.navbar__search-wrap:focus-within {
+  border-color: var(--color-terracotta);
+  box-shadow: 0 0 0 3px rgba(217, 79, 48, 0.12);
+}
+
+.navbar__search-icon {
+  color: var(--color-charcoal-40);
+  flex-shrink: 0;
+  margin-right: 6px;
+}
+
+.navbar__search-input {
+  width: 100%;
+  height: 36px;
+  background: transparent;
+  border: none;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: var(--color-charcoal);
+  outline: none;
+}
+
+.navbar__search-input::placeholder {
+  color: var(--color-charcoal-40);
+}
+
+.navbar__search-clear {
+  background: none;
+  border: none;
+  color: var(--color-charcoal-40);
+  cursor: pointer;
+  padding: 2px 6px;
+  font-size: 11px;
+  border-radius: var(--radius-full);
+}
+.navbar__search-clear:hover {
+  color: var(--color-charcoal);
+}
+
 /* ─── ACTIONS ────────────────────────────── */
 .navbar__actions {
   display: flex;
@@ -112,11 +173,23 @@
   width: 36px;
   height: 36px;
   color: var(--color-charcoal);
-  opacity: 0.6;
-  transition: opacity var(--dur-fast);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity var(--dur-fast), background var(--dur-fast);
   border-radius: var(--radius-sm);
 }
-.navbar__search-btn:hover { opacity: 1; }
+.navbar__search-btn:hover,
+.navbar__search-btn.active {
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.navbar__drawer-search {
+  padding: var(--sp-3) var(--sp-5);
+  margin-bottom: var(--sp-2);
+}
 
 .navbar__cta {
   font-family: var(--font-heading);

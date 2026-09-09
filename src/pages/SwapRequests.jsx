@@ -166,9 +166,11 @@ export default function SwapRequests() {
                   {swap.status === 'accepted' && (
                     <div className="swap-card__actions swap-card__actions--accepted">
                       <span className="swap-card__success">✓ Swap accepted! Coordinate with the other party to complete the exchange.</span>
-                      <Button variant="primary" size="sm" onClick={() => { updateSwap(swap.id, 'completed'); showToast('Exchange marked complete!', 'success'); }}>
-                        Mark as Completed
-                      </Button>
+                      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                        <Button variant="primary" size="sm" onClick={() => { updateSwap(swap.id, 'completed'); showToast('Exchange marked complete!', 'success'); }}>
+                          Mark as Completed
+                        </Button>
+                      </div>
                     </div>
                   )}
                 </div>
